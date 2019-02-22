@@ -1,14 +1,34 @@
+
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
+import 'package:fluro/fluro.dart';
+import 'package:flutter/rendering.dart';
+import 'routers/routers.dart';
+import 'routers/application.dart';
 
-void main() => runApp(MyApp());
+import 'package:flutter56_driver/utils/provider.dart';
+import 'package:flutter56_driver/utils/shared_preferences.dart';
 
-class MyApp extends StatelessWidget {//
-  // This widget is the root of your application.
+import 'package:flutter56_driver/modules/HomePage.dart';
+import 'package:flutter56_driver/modules/StatusPage.dart';
+import 'package:flutter56_driver/modules/MessagePage.dart';
+import 'package:flutter56_driver/modules/MorePage.dart';
+
+const int ThemeColor = 0xFFC91B3A;
+SpUtil sp;
+var db;
+
+class MyApp extends StatelessWidget {
+
+  MyApp() {
+    final router = Router();
+    Routes.configureRoutes(router);
+    Application.router = router;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'title',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -22,7 +42,7 @@ class MyApp extends StatelessWidget {//
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    );//MaterialApp
   }
 }
 
@@ -44,18 +64,39 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  String appBarTitle = tabData[0]['text'];
+  static List tabData = [
+    {'text': '业界动态', 'icon': new Icon(Icons.language)},
+    {'text': 'WIDGET', 'icon': new Icon(Icons.extension)},
+    {'text': '组件收藏', 'icon': new Icon(Icons.favorite)},
+    {'text': '关于手册', 'icon': new Icon(Icons.import_contacts)}
+  ];
+
+  TabController controller;
+  List<Widget> myTabs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller = new TabController(
+        initialIndex: 0, vsync: this, length: 4); // 这里的length 决定有多少个底导 submenus
+    for (int i = 0; i < tabData.length; i++) {
+      myTabs.add(new Tab(text: tabData[i]['text'], icon: tabData[i]['icon']));
+    }
+    controller.addListener(() {
+      if (controller.indexIsChanging) {
+        _onTabChange();
+      }
     });
+    Application.controller = controller;
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,41 +113,62 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(//
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      body: new TabBarView(controller: controller, children: <Widget>[
+        HomePage(),
+        StatusPage(),
+        MessagePage(),
+        MorePage()
+      ]),
+      bottomNavigationBar: Material(
+        color: const Color(0xFFF0EEEF), //底部导航栏主题颜色
+        child: SafeArea(
+          child: Container(
+            height: 65.0,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0F0F0),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: const Color(0xFFd0d0d0),
+                  blurRadius: 3.0,
+                  spreadRadius: 2.0,
+                  offset: Offset(-1.0, -1.0),
+                ),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+            child: TabBar(
+                controller: controller,
+                indicatorColor: Theme.of(context).primaryColor,
+                //tab标签的下划线颜色
+                // labelColor: const Color(0xFF000000),
+                indicatorWeight: 3.0,
+                labelColor: Theme.of(context).primaryColor,
+                unselectedLabelColor: const Color(0xFF8E8E8E),
+                tabs: myTabs
             ),
-          ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  void _onTabChange() {
+    if (this.mounted) {
+      this.setState(() {
+        appBarTitle = tabData[controller.index]['text'];
+      });
+    }
+  }
+
 }
+
+void main() async {
+
+  final provider = Provider();
+  await provider.init(true);
+  sp = await SpUtil.getInstance();
+  //new SearchHistoryList(sp);
+  db = Provider.db;
+
+  runApp(new MyApp());
+}
+
