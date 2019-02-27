@@ -54,38 +54,21 @@ class HomePageState extends State<HomePage> {
     return GridView.count(
       // Create a grid with 2 columns. If you change the scrollDirection to
       // horizontal, this would produce 2 rows.
-      crossAxisCount: 3,
-      // Generate 100 Widgets that display their index in the List
-      /*
-      children: List.generate(100, (index) {
-        return Center(
-          child: Text(
-            'Item $index',
-            style: Theme.of(context).textTheme.headline,
-          ),
-        );
-      }),
-      */
+      crossAxisCount: 2,
+      childAspectRatio: 5/3,
       children: <Widget>[
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
-        _buildIconItem("运单录入", "assets/images/btn_desktop_order_new.png"),
+        _buildIconItem("在线下单", "assets/images/icon_online_order.png"),
+        _buildIconItem("我的订单", "assets/images/icon_myorder_list.png"),
+        _buildIconItem("调度计划", "assets/images/icon_vehicle_trip.png"),
+        _buildIconItem("附件网点", "assets/images/icon_station.png"),
+        _buildIconItem("运价查询", "assets/images/icon_query_price.png"),
       ],
     );
   }
 
   Widget _buildIconItem(String title, String imagePath) {
-    return InkWell(
-      child: Card(
-        elevation: 4.0,
-        child: Column(
+    return Container(
+      child: Column(
           children: <Widget>[
             Image.asset(
               imagePath,
@@ -97,9 +80,9 @@ class HomePageState extends State<HomePage> {
               title,
               style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
             ),
-          ],
-        ),
-      ),
-    );
+          ]),
+    )
+      ;
+
   }
 }
