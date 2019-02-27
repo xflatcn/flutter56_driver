@@ -34,6 +34,8 @@ dependencies:
   intl: 0.15.7
   city_pickers: ^0.1.0
 
+  flutter_swiper: ^1.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
