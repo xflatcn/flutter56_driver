@@ -13,6 +13,12 @@ import 'package:flutter56_driver/modules/StatusPage.dart';
 import 'package:flutter56_driver/modules/MessagePage.dart';
 import 'package:flutter56_driver/modules/MorePage.dart';
 
+import 'package:flutter56_driver/modules/OnlineOrderActiv.dart';
+import 'package:flutter56_driver/modules/MyOrderListActiv.dart';
+import 'package:flutter56_driver/modules/OrderTripActiv.dart';
+import 'package:flutter56_driver/modules/QueryRateActiv.dart';
+import 'package:flutter56_driver/modules/QuerySiteActiv.dart';
+
 const int ThemeColor = 0xFFC91B3A;
 SpUtil sp;
 var db;
@@ -42,6 +48,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: {
+        '/OnlineOrder': (context) => OnlineOrderActiv(),
+        '/OrderTrip': (context) => OrderTripActiv(),
+        '/MyOrderList': (context) => MyOrderListActiv(),
+        '/QuerySite': (context) => QuerySiteActiv(),
+        '/QueryRate': (context) => QueryRateActiv(),
+      },
     );//MaterialApp
   }
 }
